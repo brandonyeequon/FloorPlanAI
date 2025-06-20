@@ -9,7 +9,7 @@ const demoRequestSchema = z.object({
   email: z.string().email('Valid email is required'),
   phone: z.string().optional(),
   company: z.string().optional(),
-  role: z.string().min(1, 'Role is required'),
+  role: z.string().transform(val => val || '').pipe(z.string().min(1, 'Role is required')),
   projectType: z.string().optional(),
   message: z.string().optional(),
 });
@@ -22,16 +22,8 @@ export async function POST(request: NextRequest) {
     console.log('Role field type:', typeof body.role);
     console.log('Role field length:', body.role?.length);
     
-    // Check if role is empty string and convert to undefined for better error handling
-    const processedBody = {
-      ...body,
-      role: body.role === '' ? undefined : body.role
-    };
-    
-    console.log('Processed body role:', processedBody.role);
-    
     // Validate the request data
-    const validatedData = demoRequestSchema.parse(processedBody);
+    const validatedData = demoRequestSchema.parse(body);
     console.log('Validation successful');
     
     // Create email content
