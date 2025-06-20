@@ -48,10 +48,14 @@ export async function POST(request: NextRequest) {
       </div>
     `;
 
-    // Send email notification
+    // Send email notification to multiple recipients
+    const emailAddresses = (process.env.DEMO_NOTIFICATION_EMAIL || 'demo@floorplanai.com')
+      .split(',')
+      .map(email => email.trim());
+
     const emailResult = await resend.emails.send({
       from: 'FloorPlanAI <onboarding@resend.dev>', // Use verified domain in production
-      to: [process.env.DEMO_NOTIFICATION_EMAIL || 'demo@floorplanai.com'],
+      to: emailAddresses,
       subject: `New Demo Request from ${validatedData.firstName} ${validatedData.lastName}`,
       html: emailHtml,
     });
