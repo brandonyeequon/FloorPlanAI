@@ -50,7 +50,7 @@ An AI-powered floor plan generation platform that transforms natural language de
 - **Framework**: [Next.js 15](https://nextjs.org/) with App Router
 - **Database**: [PostgreSQL](https://www.postgresql.org/) with [Drizzle ORM](https://orm.drizzle.team/)
 - **Payments**: [Stripe](https://stripe.com/) integration
-- **Email**: [Resend](https://resend.com/) for notifications
+- **Email**: [MailerSend](https://mailersend.com/) for notifications
 - **UI Library**: [shadcn/ui](https://ui.shadcn.com/) with [Tailwind CSS 4](https://tailwindcss.com/)
 - **Authentication**: JWT with httpOnly cookies
 - **Styling**: Custom paper texture backgrounds with responsive design
@@ -61,7 +61,7 @@ An AI-powered floor plan generation platform that transforms natural language de
 - Node.js 18+ and pnpm
 - PostgreSQL database
 - Stripe account for payments
-- Resend account for email delivery
+- MailerSend account for email delivery
 
 ### Installation
 
@@ -102,7 +102,7 @@ This creates a test user:
 Add your email service credentials to `.env`:
 
 ```bash
-RESEND_API_KEY=your_resend_api_key_here
+MAILERSEND_API_KEY=your_mailersend_api_key_here
 DEMO_NOTIFICATION_EMAIL=your-email@domain.com
 ```
 
@@ -127,8 +127,9 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook
 ### Demo Requests
 - `POST /api/demo-request` - Submit demo request form
   - Validates user input with Zod schemas
-  - Sends email notifications via Resend
+  - Sends email notifications via MailerSend
   - Supports all user roles (contractor, architect, homeowner, etc.)
+  - Supports multiple email recipients
 
 ### User Management
 - `GET /api/user` - Get current user profile
@@ -194,7 +195,7 @@ STRIPE_SECRET_KEY=your_stripe_secret_key
 STRIPE_WEBHOOK_SECRET=your_webhook_secret
 
 # Email
-RESEND_API_KEY=your_resend_api_key
+MAILERSEND_API_KEY=your_mailersend_api_key
 DEMO_NOTIFICATION_EMAIL=notifications@yourdomain.com
 
 # App
@@ -220,7 +221,7 @@ BASE_URL=https://yourdomain.com
 1. Configure your custom domain in Vercel
 2. Update `BASE_URL` environment variable
 3. Update Stripe webhook endpoints
-4. Configure email domain in Resend (optional)
+4. Configure email domain in MailerSend (optional)
 
 ## Architecture
 

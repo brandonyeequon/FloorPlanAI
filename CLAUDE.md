@@ -35,7 +35,7 @@ This is a **FloorPlanAI SaaS application** using Next.js 15 App Router with mult
 - **JWT Session Management**: httpOnly cookies with automatic refresh via middleware
 - **Multi-tenant RBAC**: Users belong to teams with Owner/Member roles
 - **Stripe Integration**: Full subscription lifecycle with webhooks
-- **Email System**: Resend integration for demo requests and notifications
+- **Email System**: MailerSend integration for demo requests and notifications
 - **Route Groups**: `(dashboard)` for protected routes, `(login)` for auth
 - **Custom Design**: Paper texture backgrounds and FloorPlanAI branding
 
@@ -70,18 +70,23 @@ All tables use auto-incrementing serial IDs. Teams table contains Stripe subscri
 3. **Auth Actions** (`/app/(login)/actions.ts`): Sign-in/up server actions
 4. **Session Utils** (`/lib/auth/session.ts`): JWT signing/verification with Jose
 
-## Email System (Resend)
+## Email System (MailerSend)
 
 **Demo Request Flow:**
 1. User fills out demo form on landing page
 2. Form submission hits `/api/demo-request`
 3. Server validates data with Zod schemas
-4. Email sent via Resend to configured notification address
+4. Email sent via MailerSend to configured notification addresses
 5. User sees success confirmation
 
+**Multiple Recipients Support:**
+- Supports comma-separated email addresses in environment variable
+- Automatically creates Recipient objects for each email
+- Fallback to individual email sending if batch fails
+
 **Configuration:**
-- `RESEND_API_KEY`: API key from Resend dashboard
-- `DEMO_NOTIFICATION_EMAIL`: Where demo requests are sent
+- `MAILERSEND_API_KEY`: API key from MailerSend dashboard
+- `DEMO_NOTIFICATION_EMAIL`: Comma-separated list of notification recipients
 
 ## Key Directories
 
@@ -135,8 +140,8 @@ AUTH_SECRET=your_jwt_secret_key
 STRIPE_SECRET_KEY=your_stripe_secret_key
 STRIPE_WEBHOOK_SECRET=your_webhook_secret
 
-# Email (Resend)
-RESEND_API_KEY=your_resend_api_key
+# Email (MailerSend)
+MAILERSEND_API_KEY=your_mailersend_api_key
 DEMO_NOTIFICATION_EMAIL=notifications@yourdomain.com
 
 # App
@@ -146,7 +151,7 @@ BASE_URL=https://yourdomain.com
 ## Development Workflow
 
 1. **Environment Setup**: Run `pnpm db:setup` to create `.env` file
-2. **Email Setup**: Configure Resend API key for demo requests
+2. **Email Setup**: Configure MailerSend API key for demo requests
 3. **Database**: Run `pnpm db:migrate && pnpm db:seed` (optional)
 4. **Development**: Start with `pnpm dev`
 5. **Testing**: Use demo form to test email notifications
@@ -156,7 +161,7 @@ BASE_URL=https://yourdomain.com
 - **Next.js 15** with experimental features (Turbopack, PPR)
 - **Drizzle ORM** with PostgreSQL and full TypeScript inference
 - **Tailwind CSS 4** with custom design system and paper textures
-- **Resend** for email delivery (replaces generic email solutions)
+- **MailerSend** for email delivery (replaces generic email solutions)
 - **shadcn/ui** components with Radix UI primitives
 - **SWR** for client-side data fetching
 - **Zod** for schema validation
@@ -179,7 +184,7 @@ Located in `/components/ui/`:
 ## Important Notes
 
 - Current deployment is frontend-focused with mocked backend
-- Email system is fully functional via Resend
+- Email system is fully functional via MailerSend
 - Database schema exists but queries have null guards for frontend-only mode
 - All FloorPlanAI branding and messaging is production-ready
 - Ready for full backend activation when needed

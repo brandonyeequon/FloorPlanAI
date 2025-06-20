@@ -34,6 +34,8 @@ function DemoRequestForm() {
     setIsSubmitting(true);
     
     try {
+      console.log('Submitting form data:', formData);
+      
       const response = await fetch('/api/demo-request', {
         method: 'POST',
         headers: {
@@ -43,9 +45,11 @@ function DemoRequestForm() {
       });
 
       const result = await response.json();
+      console.log('Server response:', result);
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to submit demo request');
+        console.error('Server error response:', result);
+        throw new Error(result.message || result.error || 'Failed to submit demo request');
       }
 
       console.log('Demo request submitted successfully:', result);

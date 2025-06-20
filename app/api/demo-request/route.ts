@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 import { z } from 'zod';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Validation schema for demo request
 const demoRequestSchema = z.object({
@@ -19,63 +17,61 @@ const demoRequestSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    console.log('Received form data:', JSON.stringify(body, null, 2));
     
     // Validate the request data
     const validatedData = demoRequestSchema.parse(body);
+    console.log('Validation successful');
     
-    // Email content
-    const emailHtml = `
-      <h2>New Demo Request from FloorPlanAI</h2>
-      <div style="margin: 20px 0; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
-        <h3>Contact Information</h3>
-        <p><strong>Name:</strong> ${validatedData.firstName} ${validatedData.lastName}</p>
-        <p><strong>Email:</strong> ${validatedData.email}</p>
-        ${validatedData.phone ? `<p><strong>Phone:</strong> ${validatedData.phone}</p>` : ''}
-        ${validatedData.company ? `<p><strong>Company:</strong> ${validatedData.company}</p>` : ''}
-        <p><strong>Role:</strong> ${validatedData.role}</p>
-        ${validatedData.projectType ? `<p><strong>Project Type:</strong> ${validatedData.projectType}</p>` : ''}
-        
-        ${validatedData.message ? `
-          <h3>Message</h3>
-          <p style="background: #f9fafb; padding: 15px; border-radius: 4px;">${validatedData.message}</p>
-        ` : ''}
-        
-        <hr style="margin: 20px 0;">
-        <p style="color: #6b7280; font-size: 14px;">
-          <strong>Submitted:</strong> ${new Date().toLocaleString()}<br>
-          <strong>From:</strong> FloorPlanAI Demo Request Form
-        </p>
-      </div>
+    // Create email content
+    const emailText = `
+New Demo Request from FloorPlanAI
+
+Contact Information:
+Name: ${validatedData.firstName} ${validatedData.lastName}
+Email: ${validatedData.email}
+${validatedData.phone ? `Phone: ${validatedData.phone}` : ''}
+${validatedData.company ? `Company: ${validatedData.company}` : ''}
+Role: ${validatedData.role}
+${validatedData.projectType ? `Project Type: ${validatedData.projectType}` : ''}
+
+${validatedData.message ? `Message: ${validatedData.message}` : ''}
+
+Submitted: ${new Date().toLocaleString()}
+From: FloorPlanAI Demo Request Form
     `;
 
-    // Send email notification to multiple recipients
-    const emailAddresses = (process.env.DEMO_NOTIFICATION_EMAIL || 'demo@floorplanai.com')
-      .split(',')
-      .map(email => email.trim())
-      .filter(email => email.length > 0); // Remove empty strings
+    // Your 2 unchanging email addresses
+    const recipients = ['brandonyeequon@gmail.com', 'Samuelfennegan11@gmail.com'];
 
-    console.log(`Sending demo request to ${emailAddresses.length} recipients:`, emailAddresses);
-
-    const emailResult = await resend.emails.send({
-      from: 'FloorPlanAI <onboarding@resend.dev>', // Use verified domain in production
-      to: emailAddresses,
-      subject: `New Demo Request from ${validatedData.firstName} ${validatedData.lastName}`,
-      html: emailHtml,
+    // Create transporter using Gmail SMTP
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_EMAIL,
+        pass: process.env.GMAIL_APP_PASSWORD, // Use App Password, not regular password
+      },
     });
 
-    if (emailResult.error) {
-      console.error('Email sending failed:', emailResult.error);
-      return NextResponse.json(
-        { error: 'Failed to send notification email' },
-        { status: 500 }
-      );
-    }
+    // Send email to both recipients
+    const mailOptions = {
+      from: process.env.GMAIL_EMAIL,
+      to: recipients,
+      subject: `New Demo Request from ${validatedData.firstName} ${validatedData.lastName}`,
+      text: emailText,
+    };
+
+    console.log('Sending email to:', recipients);
+    
+    const info = await transporter.sendMail(mailOptions);
+    
+    console.log('Email sent successfully:', info.messageId);
 
     return NextResponse.json(
       { 
         success: true, 
         message: 'Demo request submitted successfully',
-        emailId: emailResult.data?.id 
+        messageId: info.messageId
       },
       { status: 200 }
     );
@@ -84,14 +80,19 @@ export async function POST(request: NextRequest) {
     console.error('Demo request error:', error);
     
     if (error instanceof z.ZodError) {
+      console.error('Validation errors:', JSON.stringify(error.errors, null, 2));
       return NextResponse.json(
-        { error: 'Invalid form data', details: error.errors },
+        { 
+          error: 'Invalid form data', 
+          details: error.errors,
+          message: error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')
+        },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to send demo request', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
