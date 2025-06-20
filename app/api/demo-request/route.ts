@@ -51,7 +51,10 @@ export async function POST(request: NextRequest) {
     // Send email notification to multiple recipients
     const emailAddresses = (process.env.DEMO_NOTIFICATION_EMAIL || 'demo@floorplanai.com')
       .split(',')
-      .map(email => email.trim());
+      .map(email => email.trim())
+      .filter(email => email.length > 0); // Remove empty strings
+
+    console.log(`Sending demo request to ${emailAddresses.length} recipients:`, emailAddresses);
 
     const emailResult = await resend.emails.send({
       from: 'FloorPlanAI <onboarding@resend.dev>', // Use verified domain in production
