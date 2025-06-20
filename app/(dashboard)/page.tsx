@@ -61,7 +61,7 @@ function DemoRequestForm() {
 
   if (isSubmitted) {
     return (
-      <section id="demo-form" className="py-16 bg-blue-50">
+      <section id="demo-form" className="py-16 paper-texture">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="text-center py-12">
             <CardContent>
@@ -85,7 +85,7 @@ function DemoRequestForm() {
   }
 
   return (
-    <section id="demo-form" className="py-16 bg-blue-50">
+    <section id="demo-form" className="py-16 paper-texture">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl mb-4">
@@ -265,7 +265,7 @@ function DemoRequestForm() {
 export default function HomePage() {
   return (
     <main>
-      <section className="py-20">
+      <section className="py-20 paper-texture">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-12 lg:gap-8">
             <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
@@ -364,7 +364,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-16 bg-blue-50">
+      <section className="py-16 paper-texture">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
@@ -430,7 +430,7 @@ export default function HomePage() {
         </div>
       </section>
       
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
             <div>
@@ -440,16 +440,6 @@ export default function HomePage() {
               <p className="mt-3 max-w-3xl text-lg text-gray-500">
                 Cut down design time from weeks to hours. Start creating professional floor plans today.
               </p>
-            </div>
-            <div className="mt-8 lg:mt-0 flex justify-center lg:justify-end">
-              <Button
-                size="lg"
-                className="text-lg rounded-full bg-blue-600 hover:bg-blue-700"
-                onClick={() => document.getElementById('demo-form')?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                Request a Demo
-                <ArrowRight className="ml-3 h-6 w-6" />
-              </Button>
             </div>
           </div>
         </div>
