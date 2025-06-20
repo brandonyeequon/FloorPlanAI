@@ -1,12 +1,11 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Manrope } from 'next/font/google';
-import { getUser, getTeamForUser } from '@/lib/db/queries';
 import { SWRConfig } from 'swr';
 
 export const metadata: Metadata = {
-  title: 'Next.js SaaS Starter',
-  description: 'Get started quickly with Next.js, Postgres, and Stripe.'
+  title: 'FloorPlanAI - AI-Powered Floor Plan Generator',
+  description: 'Create professional floor plans instantly with AI. Just describe your space in natural language and get editable floor plans. Built for contractors and homeowners.'
 };
 
 export const viewport: Viewport = {
@@ -28,12 +27,7 @@ export default function RootLayout({
       <body className="min-h-[100dvh] bg-gray-50">
         <SWRConfig
           value={{
-            fallback: {
-              // We do NOT await here
-              // Only components that read this data will suspend
-              '/api/user': getUser(),
-              '/api/team': getTeamForUser()
-            }
+            fallback: {}
           }}
         >
           {children}

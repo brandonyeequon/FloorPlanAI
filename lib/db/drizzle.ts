@@ -1,13 +1,11 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import * as schema from './schema';
-import dotenv from 'dotenv';
+// Database disabled for frontend-only mode
+// import { drizzle } from 'drizzle-orm/postgres-js';
+// import postgres from 'postgres';
+// import * as schema from './schema';
+// import dotenv from 'dotenv';
 
-dotenv.config();
+// dotenv.config();
 
-if (!process.env.POSTGRES_URL) {
-  throw new Error('POSTGRES_URL environment variable is not set');
-}
-
-export const client = postgres(process.env.POSTGRES_URL);
-export const db = drizzle(client, { schema });
+// Mock database exports for frontend-only mode
+export const client = null;
+export const db = null;
