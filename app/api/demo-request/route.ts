@@ -18,9 +18,20 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     console.log('Received form data:', JSON.stringify(body, null, 2));
+    console.log('Role field value:', body.role);
+    console.log('Role field type:', typeof body.role);
+    console.log('Role field length:', body.role?.length);
+    
+    // Check if role is empty string and convert to undefined for better error handling
+    const processedBody = {
+      ...body,
+      role: body.role === '' ? undefined : body.role
+    };
+    
+    console.log('Processed body role:', processedBody.role);
     
     // Validate the request data
-    const validatedData = demoRequestSchema.parse(body);
+    const validatedData = demoRequestSchema.parse(processedBody);
     console.log('Validation successful');
     
     // Create email content

@@ -35,6 +35,16 @@ function DemoRequestForm() {
     
     try {
       console.log('Submitting form data:', formData);
+      console.log('Role field specifically:', formData.role);
+      console.log('Role field type:', typeof formData.role);
+      console.log('Role field length:', formData.role?.length);
+      
+      // Client-side validation for required fields
+      if (!formData.role || formData.role.trim() === '') {
+        alert('Please select your role before submitting the form.');
+        setIsSubmitting(false);
+        return;
+      }
       
       const response = await fetch('/api/demo-request', {
         method: 'POST',
