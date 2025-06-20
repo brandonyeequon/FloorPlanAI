@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { ArrowRight, MessageSquare, Wand2, Edit3, Building, Users, Mail, Phone, User } from 'lucide-react';
-import { Terminal } from './terminal';
+import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -33,12 +33,30 @@ function DemoRequestForm() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    console.log('Demo request submitted:', formData);
-    setIsSubmitted(true);
-    setIsSubmitting(false);
+    try {
+      const response = await fetch('/api/demo-request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to submit demo request');
+      }
+
+      console.log('Demo request submitted successfully:', result);
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error('Failed to submit demo request:', error);
+      // You could add error state handling here if needed
+      alert('Failed to submit demo request. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSubmitted) {
@@ -252,8 +270,7 @@ export default function HomePage() {
           <div className="lg:grid lg:grid-cols-12 lg:gap-8">
             <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
               <h1 className="text-4xl font-bold text-gray-900 tracking-tight sm:text-5xl md:text-6xl">
-                Design Your Dream Space
-                <span className="block text-blue-600">with AI</span>
+                Design Your Dream Space <span className="text-blue-600">with AI</span>
               </h1>
               <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
                 Just describe your space in natural language and get professional
@@ -281,7 +298,16 @@ export default function HomePage() {
               </div>
             </div>
             <div className="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
-              <Terminal />
+              <div className="w-3/4 mx-auto rounded-lg shadow-lg overflow-hidden">
+                <Image
+                  src="/floorplan.jpg"
+                  alt="Floor plan example showing AI-generated architectural layout"
+                  width={600}
+                  height={400}
+                  className="w-full h-auto object-cover"
+                  priority
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -412,28 +438,18 @@ export default function HomePage() {
                 Ready to create your floor plan?
               </h2>
               <p className="mt-3 max-w-3xl text-lg text-gray-500">
-                Join thousands of contractors and homeowners who trust FloorPlanAI
-                for their space planning needs. Start creating professional floor plans today.
+                Cut down design time from weeks to hours. Start creating professional floor plans today.
               </p>
             </div>
             <div className="mt-8 lg:mt-0 flex justify-center lg:justify-end">
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  size="lg"
-                  className="text-lg rounded-full bg-blue-600 hover:bg-blue-700"
-                  onClick={() => document.getElementById('demo-form')?.scrollIntoView({ behavior: 'smooth' })}
-                >
-                  Request a Demo
-                  <ArrowRight className="ml-3 h-6 w-6" />
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="text-lg rounded-full border-blue-600 text-blue-600 hover:bg-blue-50"
-                >
-                  Contact Sales
-                </Button>
-              </div>
+              <Button
+                size="lg"
+                className="text-lg rounded-full bg-blue-600 hover:bg-blue-700"
+                onClick={() => document.getElementById('demo-form')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                Request a Demo
+                <ArrowRight className="ml-3 h-6 w-6" />
+              </Button>
             </div>
           </div>
         </div>
